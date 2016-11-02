@@ -1,5 +1,7 @@
 package uk.gov.justice.maven.rules.service;
 
+import static org.codehaus.plexus.util.StringUtils.isEmpty;
+
 import uk.gov.justice.maven.rules.domain.Artifact;
 import uk.gov.justice.maven.rules.domain.ArtifactoryInfo;
 import uk.gov.justice.maven.rules.domain.Error;
@@ -16,7 +18,7 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
-public class ApiConvergenceService {
+public class RequireLatestVersionsService {
 
     static final String RAML_MAVEN_PLUGIN = "raml-maven-plugin";
     static final String RAML = "raml";
@@ -25,7 +27,7 @@ public class ApiConvergenceService {
     private ArtifactoryParser parser;
     private EnforcerRuleHelper helper;
 
-    public ApiConvergenceService(ArtifactoryClient artifactoryClient, ArtifactoryParser parser, EnforcerRuleHelper helper) {
+    public RequireLatestVersionsService(ArtifactoryClient artifactoryClient, ArtifactoryParser parser, EnforcerRuleHelper helper) {
         this.artifactoryClient = artifactoryClient;
         this.parser = parser;
         this.helper = helper;
@@ -44,7 +46,8 @@ public class ApiConvergenceService {
         buildPlugins.stream()
                 .filter(buildPlugin -> buildPlugin.getArtifactId().equals(RAML_MAVEN_PLUGIN))
                 .forEach(plugin -> plugin.getDependencies().stream()
-                        .filter(dependency -> ((Dependency) dependency).getClassifier().equals(RAML))
+                        .filter(dependency -> (!isEmpty(((Dependency) dependency).getClassifier())) &&
+                                ((Dependency) dependency).getClassifier().equals(RAML))
                         .forEach(ramlDependency -> verify((Dependency) ramlDependency)
                                 .ifPresent(errors::add)));
 

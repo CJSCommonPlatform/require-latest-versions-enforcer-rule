@@ -4,7 +4,7 @@ import static java.util.Arrays.asList;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.justice.maven.rules.service.ApiConvergenceService.RAML;
+import static uk.gov.justice.maven.rules.service.RequireLatestVersionsService.RAML;
 import static uk.gov.justice.maven.rules.utils.Exceptions.assertThat;
 
 import uk.gov.justice.maven.rules.domain.Artifact;
@@ -30,9 +30,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ApiConvergenceServiceTest {
+public class RequireLatestVersionsServiceTest {
 
-    ApiConvergenceService apiConvergenceService;
+    RequireLatestVersionsService apiConvergenceService;
 
     @Mock
     private ArtifactoryClient artifactoryClient;
@@ -54,7 +54,7 @@ public class ApiConvergenceServiceTest {
     public void setUp() throws Exception {
         when(helper.evaluate(Matchers.anyString())).thenReturn(mavenProject);
         when(helper.getLog()).thenReturn(log);
-        apiConvergenceService = new ApiConvergenceService(artifactoryClient, artifactoryParser, helper);
+        apiConvergenceService = new RequireLatestVersionsService(artifactoryClient, artifactoryParser, helper);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class ApiConvergenceServiceTest {
     }
 
     @Test
-    public void executeWithRamlMavenPluginWithNoRamlDepsFound() throws ExpressionEvaluationException, EnforcerRuleException {
+    public void executeWithRamlMavenPluginWithNoDepsFound() throws ExpressionEvaluationException, EnforcerRuleException {
         Plugin plugin = ramlPlugin();
         when(mavenProject.getBuildPlugins()).thenReturn(asList(plugin));
 
@@ -77,11 +77,23 @@ public class ApiConvergenceServiceTest {
     }
 
     @Test
+    public void executeWithRamlMavenPluginWithDepsWithoutClassifier() throws ExpressionEvaluationException, EnforcerRuleException {
+        Plugin ramlPlugin = ramlPlugin();
+        when(mavenProject.getBuildPlugins()).thenReturn(asList(ramlPlugin));
+
+        ramlPlugin.addDependency(dependencyWithVersion("1.1"));
+
+        verifyZeroInteractions(artifactoryParser, artifactoryClient);
+    }
+
+    @Test
     public void executeWithRamlMavenPluginWithRamlDepsWithVersionsUpToDate() throws ExpressionEvaluationException, EnforcerRuleException {
         Plugin ramlPlugin = ramlPlugin();
         when(mavenProject.getBuildPlugins()).thenReturn(asList(ramlPlugin));
 
-        ramlPlugin.addDependency(ramlDependencyWithVersion("3.2.1"));
+        Dependency dependency = dependencyWithVersion("3.2.1");
+        dependency.setClassifier(RAML);
+        ramlPlugin.addDependency(dependency);
 
         when(artifactoryParser.parse(anyString())).thenReturn(artifactsWithVersions("2.0.187", "2.0.188"));
 
@@ -93,7 +105,9 @@ public class ApiConvergenceServiceTest {
         Plugin ramlPlugin = ramlPlugin();
         when(mavenProject.getBuildPlugins()).thenReturn(asList(ramlPlugin));
 
-        ramlPlugin.addDependency(ramlDependencyWithVersion("2.0.187"));
+        Dependency dependency = dependencyWithVersion("2.0.187");
+        dependency.setClassifier(RAML);
+        ramlPlugin.addDependency(dependency);
 
         when(artifactoryParser.parse(anyString())).thenReturn(artifactsWithVersions("2.0.187", "2.0.188"));
 
@@ -104,13 +118,12 @@ public class ApiConvergenceServiceTest {
 
     private Plugin ramlPlugin() {
         Plugin plugin = new Plugin();
-        plugin.setArtifactId(ApiConvergenceService.RAML_MAVEN_PLUGIN);
+        plugin.setArtifactId(RequireLatestVersionsService.RAML_MAVEN_PLUGIN);
         return plugin;
     }
 
-    private Dependency ramlDependencyWithVersion(String version) {
+    private Dependency dependencyWithVersion(String version) {
         Dependency ramlDep = new Dependency();
-        ramlDep.setClassifier(RAML);
         ramlDep.setArtifactId("a");
         ramlDep.setVersion(version);
         ramlDep.setGroupId("xyz");

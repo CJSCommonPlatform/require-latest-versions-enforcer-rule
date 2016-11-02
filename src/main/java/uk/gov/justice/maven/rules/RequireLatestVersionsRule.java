@@ -2,7 +2,7 @@ package uk.gov.justice.maven.rules;
 
 
 import uk.gov.justice.maven.rules.domain.RuleException;
-import uk.gov.justice.maven.rules.service.ApiConvergenceService;
+import uk.gov.justice.maven.rules.service.RequireLatestVersionsService;
 import uk.gov.justice.maven.rules.service.ArtifactoryClient;
 import uk.gov.justice.maven.rules.service.ArtifactoryParser;
 
@@ -10,7 +10,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
-public class ApiConvergenceRule
+public class RequireLatestVersionsRule
         implements EnforcerRule {
 
     private String artifactoryUrl;
@@ -20,7 +20,7 @@ public class ApiConvergenceRule
 
     public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
         try {
-            new ApiConvergenceService(new ArtifactoryClient(artifactoryUrl, artifactoryPort, proxyHost, proxyPort, helper.getLog()), new ArtifactoryParser(helper.getLog()), helper).execute();
+            new RequireLatestVersionsService(new ArtifactoryClient(artifactoryUrl, artifactoryPort, proxyHost, proxyPort, helper.getLog()), new ArtifactoryParser(helper.getLog()), helper).execute();
         } catch (RuleException e) {
             throw new EnforcerRuleException(e.getMessage() + e.getError());
         }

@@ -10,9 +10,9 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <packaging>jar</packaging>
-    <name>Api Convergence Rule</name>
-    <description>This rule should fail should raml version used by porject is lower than latest
-        release version
+    <name>Require latest versions</name>
+    <description>This rule will fail when raml dependency version used by raml-maven-plugin is lower
+        than latest released version
     </description>
     <properties>
         <api.version>1.4.1</api.version>
@@ -22,8 +22,11 @@
     </properties>
 
     <scm>
-        <connection>scm:git:git@github.com:CJSCommonPlatform/require-latest-versions-enforcer-rule.git</connection>
-        <developerConnection>scm:git:git@github.com:CJSCommonPlatform/require-latest-versions-enforcer-rule.git
+        <connection>
+            scm:git:git@github.com:CJSCommonPlatform/require-latest-versions-enforcer-rule.git
+        </connection>
+        <developerConnection>
+            scm:git:git@github.com:CJSCommonPlatform/require-latest-versions-enforcer-rule.git
         </developerConnection>
     </scm>
 

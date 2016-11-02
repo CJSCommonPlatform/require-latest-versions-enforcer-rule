@@ -8,7 +8,7 @@ import static com.google.common.io.Resources.getResource;
 import static java.nio.charset.Charset.defaultCharset;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static uk.gov.justice.maven.rules.service.ApiConvergenceService.RAML;
+import static uk.gov.justice.maven.rules.service.RequireLatestVersionsService.RAML;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.io.Resources;

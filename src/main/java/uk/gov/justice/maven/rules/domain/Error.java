@@ -22,7 +22,7 @@ public class Error {
 
     @Override
     public String toString() {
-        return "Error{" +
+        return "\nError{" +
                 "ramlDependency=" + ramlDependency +
                 ", releasedVersion='" + releasedVersion + '\'' +
                 '}';

@@ -25,7 +25,6 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -50,11 +49,10 @@ public class RequireLatestVersionsServiceTest {
     private MavenProject mavenProject;
 
 
+
     @Before
     public void setUp() throws Exception {
-        when(helper.evaluate(Matchers.anyString())).thenReturn(mavenProject);
-        when(helper.getLog()).thenReturn(log);
-        apiConvergenceService = new RequireLatestVersionsService(artifactoryClient, artifactoryParser, helper);
+        apiConvergenceService = new RequireLatestVersionsService(artifactoryClient, artifactoryParser,mavenProject, log);
     }
 
     @Test
@@ -113,7 +111,7 @@ public class RequireLatestVersionsServiceTest {
 
         assertThat(() -> apiConvergenceService.execute())
                 .throwsException(RuleException.class)
-                .withMessageContaining("Rule has failed as found higher released versions of dependencies.");
+                .withMessageContaining("Rule has failed as found higher released versions of dependencies:");
     }
 
     private Plugin ramlPlugin() {

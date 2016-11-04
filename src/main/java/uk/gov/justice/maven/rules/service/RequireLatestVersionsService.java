@@ -12,11 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 public class RequireLatestVersionsService {
 
@@ -25,25 +24,20 @@ public class RequireLatestVersionsService {
 
     private ArtifactoryClient artifactoryClient;
     private ArtifactoryParser parser;
-    private EnforcerRuleHelper helper;
+    private MavenProject mavenProject;
+    private Log log;
 
-    public RequireLatestVersionsService(ArtifactoryClient artifactoryClient, ArtifactoryParser parser, EnforcerRuleHelper helper) {
+    public RequireLatestVersionsService(ArtifactoryClient artifactoryClient, ArtifactoryParser parser, MavenProject mavenProject, Log log) {
         this.artifactoryClient = artifactoryClient;
         this.parser = parser;
-        this.helper = helper;
+        this.mavenProject = mavenProject;
+        this.log = log;
     }
 
     public void execute() {
         List<Error> errors = new ArrayList<>();
 
-        List<Plugin> buildPlugins;
-        try {
-            buildPlugins = ((MavenProject) helper.evaluate("${project}")).getBuildPlugins();
-        } catch (ExpressionEvaluationException e) {
-            throw new RuntimeException("Error getting build plugins", e);
-        }
-
-        buildPlugins.stream()
+        ((List<Plugin>) mavenProject.getBuildPlugins()).stream()
                 .filter(buildPlugin -> buildPlugin.getArtifactId().equals(RAML_MAVEN_PLUGIN))
                 .forEach(plugin -> plugin.getDependencies().stream()
                         .filter(dependency -> (!isEmpty(((Dependency) dependency).getClassifier())) &&
@@ -52,18 +46,18 @@ public class RequireLatestVersionsService {
                                 .ifPresent(errors::add)));
 
         if (errors.size() > 0) {
-            throw new RuleException("Rule has failed as found higher released versions of dependencies. ", errors);
+            throw new RuleException("Rule has failed as found higher released versions of dependencies:\n", errors);
         }
     }
 
     private Optional<Error> verify(Dependency ramlDependency) {
-        helper.getLog().debug("verifying " + ramlDependency.toString());
+         log.debug("verifying " + ramlDependency.toString());
 
         String payload;
         try {
             payload = artifactoryClient.findArtifactInfo(ramlDependency);
         } catch (IOException e) {
-            helper.getLog().error("Couldn't get information from artifactory for " + ramlDependency + ". Error: " + e.getMessage());
+            log.error("Couldn't get information from artifactory for " + ramlDependency + ". Error: " + e.getMessage());
             return Optional.empty();
         }
 

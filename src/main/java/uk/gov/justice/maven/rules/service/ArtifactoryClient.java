@@ -27,23 +27,20 @@ public class ArtifactoryClient {
     private static final int NO_PROXY = -1;
 
     private String artifactoryUrl;
-    private int artifactoryPort;
     private String proxyHost;
     private int proxyPort = NO_PROXY;
 
     private Log log;
 
-    public ArtifactoryClient(String artifactoryUrl, int artifactoryPort, String proxyHost, int proxyPort, Log log) {
+    public ArtifactoryClient(String artifactoryUrl, String proxyHost, int proxyPort, Log log) {
         this.artifactoryUrl = artifactoryUrl;
-        this.artifactoryPort = artifactoryPort;
         this.proxyHost = proxyHost;
         this.proxyPort = proxyPort;
         this.log = log;
     }
 
-    public ArtifactoryClient(String artifactoryUrl, int artifactoryPort, Log log) {
+    public ArtifactoryClient(String artifactoryUrl, Log log) {
         this.artifactoryUrl = artifactoryUrl;
-        this.artifactoryPort = artifactoryPort;
         this.log = log;
     }
 
@@ -51,24 +48,24 @@ public class ArtifactoryClient {
         String payload;
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpHost target = new HttpHost(artifactoryUrl, artifactoryPort, "http");
-            HttpHost proxy = null;
+            HttpHost httpHost = HttpHost.create(artifactoryUrl.replace("/artifactory", ""));
+
+            HttpHost target = new HttpHost(httpHost.getHostName(), httpHost.getPort(), "http");
 
             RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
                     .setSocketTimeout(SOCKET_TIMEOUT)
                     .setConnectTimeout(CONNECTION_TIMEOUT);
 
-            //todo add test with testing proxied call
             if (proxyPort != -1) {
                 requestConfigBuilder.setProxy(new HttpHost(proxyHost, proxyPort, "http"));
+                log.debug("configured proxy: " + proxyHost);
             }
 
             RequestConfig config = requestConfigBuilder.build();
             HttpGet request = new HttpGet(format(REQUEST, ramlDependency.getGroupId(), ramlDependency.getArtifactId()));
             request.setConfig(config);
 
-
-            log.debug("Sending request for " + request.getRequestLine() + " to " + target + " via " + proxy);
+            log.debug("Sending request for " + request.getRequestLine() + " to " + target + " via proxy " + proxyHost + ":" + proxyPort);
 
             try (CloseableHttpResponse response = httpClient.execute(target, request);) {
                 log.debug("response code:" + response.getStatusLine());

@@ -25,10 +25,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ArtifactoryClientTest {
 
-    private static final int ARTIFACTORY_PORT = 8081;
-    private static final String ARTIFACTORY_URL = "localhost";
-    private static final int PROXY_PORT = -1;
-    private static final String PROXY_HOST = "";
+    private static final String ARTIFACTORY_URL = "http://localhost:8081/artifactory";
     private static final String GROUP_A = "group-a";
     private static final String ARTIFACT_B = "artifact-b";
 
@@ -42,7 +39,7 @@ public class ArtifactoryClientTest {
 
     @Before
     public void setUp() throws Exception {
-        artifactoryClient = new ArtifactoryClient(ARTIFACTORY_URL, ARTIFACTORY_PORT, log);
+        artifactoryClient = new ArtifactoryClient(ARTIFACTORY_URL, log);
     }
 
     @Test

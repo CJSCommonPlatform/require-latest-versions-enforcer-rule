@@ -23,11 +23,6 @@ Add the plugin to the build plugins section and set up artifactory and proxy if 
                             <rules>
                                 <RequireLatestVersionsRule
                                         implementation="uk.gov.justice.maven.rules.RequireLatestVersionsRule">
-                                    <artifactoryUrl>emartifactory.sandboxes.dev2.cloud.local
-                                    </artifactoryUrl>
-                                    <artifactoryPort>8081</artifactoryPort>
-                                    <proxyHost>10.224.23.8</proxyHost>
-                                    <proxyPort>3128</proxyPort>
                                 </RequireLatestVersionsRule>
                             </rules>
                         </configuration>

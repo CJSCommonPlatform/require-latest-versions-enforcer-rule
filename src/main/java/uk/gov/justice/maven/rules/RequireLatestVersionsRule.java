@@ -2,6 +2,8 @@ package uk.gov.justice.maven.rules;
 
 
 import uk.gov.justice.maven.rules.domain.RuleException;
+import uk.gov.justice.maven.rules.service.ArtifactComparator;
+import uk.gov.justice.maven.rules.service.ArtifactUrlBuilder;
 import uk.gov.justice.maven.rules.service.ArtifactoryClient;
 import uk.gov.justice.maven.rules.service.ArtifactoryParser;
 import uk.gov.justice.maven.rules.service.RequireLatestVersionsService;
@@ -17,6 +19,7 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 public class RequireLatestVersionsRule
         implements EnforcerRule {
 
+    //todo add tests
     public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
         try {
             MavenProject mavenProject = (MavenProject) helper.evaluate("${project}");
@@ -25,10 +28,10 @@ public class RequireLatestVersionsRule
             Proxy proxy = (Proxy) settings.getProxies().get(0);
             String artifactoryUrl = mavenProject.getProperties().get("artifactory.dist.url").toString().replace("/artifactory", "");
 
-            ArtifactoryClient artifactoryClient = new ArtifactoryClient(artifactoryUrl , proxy.getHost(), proxy.getPort(), helper.getLog());
+            ArtifactoryClient artifactoryClient = new ArtifactoryClient(new ArtifactUrlBuilder(), artifactoryUrl, proxy.getHost(), proxy.getPort(), helper.getLog());
             ArtifactoryParser artifactoryParser = new ArtifactoryParser(helper.getLog());
 
-            RequireLatestVersionsService requireLatestVersionsService = new RequireLatestVersionsService(artifactoryClient, artifactoryParser, mavenProject, helper.getLog());
+            RequireLatestVersionsService requireLatestVersionsService = new RequireLatestVersionsService(artifactoryClient, artifactoryParser, mavenProject, helper.getLog(), new ArtifactComparator( helper.getLog()));
 
             requireLatestVersionsService.execute();
         } catch (RuleException e) {

@@ -7,11 +7,13 @@ import uk.gov.justice.maven.rules.domain.ArtifactoryInfo;
 import uk.gov.justice.maven.rules.domain.Error;
 import uk.gov.justice.maven.rules.domain.RuleException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import net.diibadaaba.zipdiff.Differences;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.logging.Log;
@@ -26,12 +28,15 @@ public class RequireLatestVersionsService {
     private ArtifactoryParser parser;
     private MavenProject mavenProject;
     private Log log;
+    private ArtifactComparator artifactComparator;
 
-    public RequireLatestVersionsService(ArtifactoryClient artifactoryClient, ArtifactoryParser parser, MavenProject mavenProject, Log log) {
+    public RequireLatestVersionsService(ArtifactoryClient artifactoryClient, ArtifactoryParser parser, MavenProject mavenProject,
+                                        Log log, ArtifactComparator artifactComparator) {
         this.artifactoryClient = artifactoryClient;
         this.parser = parser;
         this.mavenProject = mavenProject;
         this.log = log;
+        this.artifactComparator = artifactComparator;
     }
 
     public void execute() {
@@ -51,7 +56,7 @@ public class RequireLatestVersionsService {
     }
 
     private Optional<Error> verify(Dependency ramlDependency) {
-         log.debug("verifying " + ramlDependency.toString());
+        log.debug("verifying " + ramlDependency.toString());
 
         String payload;
         try {
@@ -66,11 +71,34 @@ public class RequireLatestVersionsService {
         artifactVersionList.getResults().sort(Artifact.reverseComparator);
 
         Artifact lastReleasedArtifactVersion = artifactVersionList.getResults().get(0);
+        Dependency releasedDependency = new Dependency();
+        releasedDependency.setGroupId(ramlDependency.getGroupId());
+        releasedDependency.setArtifactId(ramlDependency.getArtifactId());
+        releasedDependency.setVersion(lastReleasedArtifactVersion.getVersion());
 
-        if (lastReleasedArtifactVersion.isVersionHigherThan(ramlDependency.getVersion())) {
-            return Optional.of(new Error(ramlDependency, lastReleasedArtifactVersion.getVersion()));
+        Optional<File> ramlDependencyFile = downloadArtifact(ramlDependency);
+        Optional<File> releasedDependencyFile = downloadArtifact(releasedDependency);
+
+        if (!ramlDependencyFile.isPresent() || !releasedDependencyFile.isPresent()) {
+            return Optional.empty();
         }
 
+        if (lastReleasedArtifactVersion.isVersionHigherThan(ramlDependency.getVersion())) {
+            Optional<Differences> difference = artifactComparator.findDifferences(ramlDependencyFile.get(), releasedDependencyFile.get(), "META-INF");
+            if (difference.isPresent()) {
+                return Optional.of(new Error(ramlDependency, lastReleasedArtifactVersion.getVersion(), difference.get()));
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    private Optional<File> downloadArtifact(Dependency ramlDependency) {
+        try {
+            return Optional.of(artifactoryClient.getArtifact(ramlDependency));
+        } catch (IOException e) {
+            log.error("Couldn't download artifact: " + ramlDependency + ". Error: " + e.getMessage());
+        }
         return Optional.empty();
     }
 

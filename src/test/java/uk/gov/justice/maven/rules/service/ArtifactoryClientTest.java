@@ -35,11 +35,14 @@ public class ArtifactoryClientTest {
     @Mock
     private Log log;
 
+    @Mock
+    private ArtifactUrlBuilder artifactUrlBuilder;
+
     private ArtifactoryClient artifactoryClient;
 
     @Before
     public void setUp() throws Exception {
-        artifactoryClient = new ArtifactoryClient(ARTIFACTORY_URL, log);
+        artifactoryClient = new ArtifactoryClient(artifactUrlBuilder, ARTIFACTORY_URL, log);
     }
 
     @Test

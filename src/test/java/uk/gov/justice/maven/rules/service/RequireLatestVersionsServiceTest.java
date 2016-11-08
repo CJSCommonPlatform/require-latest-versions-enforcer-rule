@@ -1,6 +1,7 @@
 package uk.gov.justice.maven.rules.service;
 
 import static java.util.Arrays.asList;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -11,10 +12,13 @@ import uk.gov.justice.maven.rules.domain.Artifact;
 import uk.gov.justice.maven.rules.domain.ArtifactoryInfo;
 import uk.gov.justice.maven.rules.domain.RuleException;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
+import net.diibadaaba.zipdiff.Differences;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Dependency;
@@ -43,16 +47,22 @@ public class RequireLatestVersionsServiceTest {
     private EnforcerRuleHelper helper;
 
     @Mock
+    private ArtifactComparator artifactComparator;
+
+    @Mock
     private Log log;
+
+    @Mock
+    private File file;
 
     @Mock
     private MavenProject mavenProject;
 
-
-
     @Before
     public void setUp() throws Exception {
-        apiConvergenceService = new RequireLatestVersionsService(artifactoryClient, artifactoryParser,mavenProject, log);
+        apiConvergenceService = new RequireLatestVersionsService(artifactoryClient, artifactoryParser,mavenProject, log, artifactComparator);
+        when(artifactComparator.findDifferences(any(File.class), any(File.class), anyString())).thenReturn(Optional.of(new Differences()));
+        when(artifactoryClient.getArtifact(any(Dependency.class))).thenReturn(file);
     }
 
     @Test

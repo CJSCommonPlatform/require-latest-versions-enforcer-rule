@@ -15,6 +15,9 @@
         than latest released version
     </description>
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
         <api.version>1.4.1</api.version>
         <maven.version>2.0.9</maven.version>
         <jackson.version>2.6.4</jackson.version>
@@ -61,6 +64,14 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+            </plugin>
+
+
+
         </plugins>
     </build>
 
@@ -128,6 +139,21 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/net.diibadaaba.zipdiff/zipdiff -->
+        <dependency>
+            <groupId>net.diibadaaba.zipdiff</groupId>
+            <artifactId>zipdiff</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
+        </dependency>
+
+
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -157,4 +183,6 @@
         </dependency>
 
     </dependencies>
+
+
 </project>

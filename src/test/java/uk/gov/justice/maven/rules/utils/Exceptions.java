@@ -25,7 +25,6 @@ public class Exceptions {
             throw new AssertionError("Expected exception " + type.getName() + " , but thrown " + e.getClass().getName());
         }
         throw new AssertionError("Expected to throw an exception " + type.getName() + ", but did not");
-
     }
 
     public Exceptions withMessageContaining(String s) {

@@ -64,14 +64,6 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-            </plugin>
-
-
-
         </plugins>
     </build>
 
@@ -139,14 +131,12 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/net.diibadaaba.zipdiff/zipdiff -->
         <dependency>
             <groupId>net.diibadaaba.zipdiff</groupId>
             <artifactId>zipdiff</artifactId>
             <version>1.0</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -183,6 +173,4 @@
         </dependency>
 
     </dependencies>
-
-
 </project>

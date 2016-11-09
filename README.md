@@ -1,10 +1,11 @@
 # Require Latest Versions
 
-A Maven Enforcer rule for ensuring that certain dependencies are using the latest version available
+A Maven Enforcer rule for ensuring that raml-maven-plugin dependencies are using the latest released version which has any API modifications
+comparing with current version of the dependency.
 
 Usage
 
-Add the plugin to the build plugins section and set up artifactory and proxy if required. 
+Add the plugin to the build plugins section of any project which is using raml-maven-plugin: 
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -2,7 +2,6 @@ package uk.gov.justice.maven.rules.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 import net.diibadaaba.zipdiff.DifferenceCalculator;
@@ -12,12 +11,14 @@ import org.apache.maven.plugin.logging.Log;
 public class ArtifactComparator {
 
     private Log log;
+    private String filter;
 
-    public ArtifactComparator(Log log) {
+    public ArtifactComparator(Log log, String filter) {
         this.log = log;
+        this.filter = filter;
     }
 
-    public Optional<Differences> findDifferences(File ramlDependencyFile, File releasedDependencyFile, List<String> filters) {
+    public Optional<Differences> findDifferences(File ramlDependencyFile, File releasedDependencyFile) {
         Differences differences = null;
 
         try {
@@ -26,9 +27,9 @@ public class ArtifactComparator {
             differences = calc.getDifferences();
 
             if (differences.hasDifferences()) {
-                new MapFilter<>(differences.getAdded()).apply(filters);
-                new MapFilter<>(differences.getChanged()).apply(filters);
-                new MapFilter<>(differences.getRemoved()).apply(filters);
+                new MapFilter<>(differences.getAdded()).apply(filter);
+                new MapFilter<>(differences.getChanged()).apply(filter);
+                new MapFilter<>(differences.getRemoved()).apply(filter);
             }
         } catch (IOException e) {
             log.error("Couldn't read files: " + ramlDependencyFile + "," + releasedDependencyFile, e);

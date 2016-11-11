@@ -1,7 +1,9 @@
 # Require Latest Versions
 
 A Maven Enforcer rule for ensuring that raml-maven-plugin dependencies are using the latest released version which has any API modifications
-comparing with current version of the dependency.
+in the raml or schema file comparing with current version of the dependency.
+
+Please note you can set custom file names modifications of which you are interested in by setting by filter using regexp.
 
 Usage
 
@@ -24,6 +26,7 @@ Add the plugin to the build plugins section of any project which is using raml-m
                             <rules>
                                 <RequireLatestVersionsRule
                                         implementation="uk.gov.justice.maven.rules.RequireLatestVersionsRule">
+                                    <filter>^raml/json/schema/?|.*raml$</filter>                                        
                                 </RequireLatestVersionsRule>
                             </rules>
                         </configuration>

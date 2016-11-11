@@ -1,6 +1,5 @@
 package uk.gov.justice.maven.rules.service;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -19,8 +18,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ArtifactComparatorTest {
 
-    private static final String EXISTING_FILE_PATTERN = "^((?!file4).)*$";
-    private static final String NON_EXISTING_PATTERN = "^((?!blabla).)*$";
+    private static final String FILTER = "^((?!file4).)*$";
 
     @Mock
     private Log log;
@@ -34,12 +32,12 @@ public class ArtifactComparatorTest {
         ClassLoader classLoader = getClass().getClassLoader();
         file1 = new File(classLoader.getResource("jars/version1.jar").getFile());
         file2 = new File(classLoader.getResource("jars/version2.jar").getFile());
-        artifactComparator = new ArtifactComparator(log);
+        artifactComparator = new ArtifactComparator(log, FILTER);
     }
 
     @Test
     public void findDifferences() throws Exception {
-        Optional<Differences> differencesOptional = artifactComparator.findDifferences(file1, file2, asList(EXISTING_FILE_PATTERN, NON_EXISTING_PATTERN));
+        Optional<Differences> differencesOptional = artifactComparator.findDifferences(file1, file2);
 
         Differences differences = differencesOptional.get();
 

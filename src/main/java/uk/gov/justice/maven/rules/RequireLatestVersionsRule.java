@@ -19,6 +19,9 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 public class RequireLatestVersionsRule
         implements EnforcerRule {
 
+    private String filter;
+
+
     //todo add tests
     public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
         try {
@@ -26,12 +29,14 @@ public class RequireLatestVersionsRule
             Settings settings = (Settings) helper.evaluate("${settings}");
 
             Proxy proxy = (Proxy) settings.getProxies().get(0);
-            String artifactoryUrl = mavenProject.getProperties().get("artifactory.dist.url").toString().replace("/artifactory", "");
+            String artifactoryUrl = getArtifactoryUrl(mavenProject);
 
             ArtifactoryClient artifactoryClient = new ArtifactoryClient(new ArtifactUrlBuilder(), artifactoryUrl, proxy.getHost(), proxy.getPort(), helper.getLog());
             ArtifactoryParser artifactoryParser = new ArtifactoryParser(helper.getLog());
+            ArtifactComparator artifactComparator = new ArtifactComparator(helper.getLog(), filter);
 
-            RequireLatestVersionsService requireLatestVersionsService = new RequireLatestVersionsService(artifactoryClient, artifactoryParser, mavenProject, helper.getLog(), new ArtifactComparator( helper.getLog()));
+            RequireLatestVersionsService requireLatestVersionsService = new RequireLatestVersionsService(artifactoryClient, artifactoryParser,
+                    mavenProject, helper.getLog(), artifactComparator);
 
             requireLatestVersionsService.execute();
         } catch (RuleException e) {
@@ -39,6 +44,14 @@ public class RequireLatestVersionsRule
         } catch (ExpressionEvaluationException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
+
+    private String getArtifactoryUrl(MavenProject mavenProject) {
+        return mavenProject.getProperties().get("artifactory.dist.url").toString().replace("/artifactory", "");
     }
 
     public String getCacheId() {

@@ -61,7 +61,7 @@ public class RequireLatestVersionsServiceTest {
     @Before
     public void setUp() throws Exception {
         apiConvergenceService = new RequireLatestVersionsService(artifactoryClient, artifactoryParser,mavenProject, log, artifactComparator);
-        when(artifactComparator.findDifferences(any(File.class), any(File.class), anyString())).thenReturn(Optional.of(new Differences()));
+        when(artifactComparator.findDifferences(any(File.class), any(File.class), any(List.class))).thenReturn(Optional.of(new Differences()));
         when(artifactoryClient.getArtifact(any(Dependency.class))).thenReturn(file);
     }
 

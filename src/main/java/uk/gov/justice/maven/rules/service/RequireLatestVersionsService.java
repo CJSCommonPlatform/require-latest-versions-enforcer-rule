@@ -1,5 +1,6 @@
 package uk.gov.justice.maven.rules.service;
 
+import static java.util.Arrays.asList;
 import static org.codehaus.plexus.util.StringUtils.isEmpty;
 
 import uk.gov.justice.maven.rules.domain.Artifact;
@@ -84,7 +85,8 @@ public class RequireLatestVersionsService {
         }
 
         if (lastReleasedArtifactVersion.isVersionHigherThan(ramlDependency.getVersion())) {
-            Optional<Differences> difference = artifactComparator.findDifferences(ramlDependencyFile.get(), releasedDependencyFile.get(), "META-INF");
+            String filter = "^((?!META-INF).)*$";
+            Optional<Differences> difference = artifactComparator.findDifferences(ramlDependencyFile.get(), releasedDependencyFile.get(), asList(filter));
             if (difference.isPresent()) {
                 return Optional.of(new Error(ramlDependency, lastReleasedArtifactVersion.getVersion(), difference.get()));
             }

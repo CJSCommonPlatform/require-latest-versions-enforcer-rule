@@ -1,5 +1,6 @@
 package uk.gov.justice.maven.rules.service;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -18,8 +19,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ArtifactComparatorTest {
 
-    private static final String EXISTING_FILE_PATTERN = "file4";
-    private static final String NON_EXISTING_PATTERN = "blablabla";
+    private static final String EXISTING_FILE_PATTERN = "^((?!file4).)*$";
+    private static final String NON_EXISTING_PATTERN = "^((?!blabla).)*$";
 
     @Mock
     private Log log;
@@ -38,7 +39,7 @@ public class ArtifactComparatorTest {
 
     @Test
     public void findDifferences() throws Exception {
-        Optional<Differences> differencesOptional = artifactComparator.findDifferences(file1, file2, EXISTING_FILE_PATTERN);
+        Optional<Differences> differencesOptional = artifactComparator.findDifferences(file1, file2, asList(EXISTING_FILE_PATTERN, NON_EXISTING_PATTERN));
 
         Differences differences = differencesOptional.get();
 
@@ -55,25 +56,5 @@ public class ArtifactComparatorTest {
         assertThat(differences.toString().contains("[changed] file1"), is(true));
     }
 
-    @Test
-    public void findDifferencesWithoutFilter() throws Exception {
-        Optional<Differences> differencesOptional = artifactComparator.findDifferences(file1, file2, NON_EXISTING_PATTERN);
-
-        Differences differences = differencesOptional.get();
-
-        assertThat(differences.getAdded().size(), is(2));
-        assertThat(differences.getRemoved().size(), is(1));
-        assertThat(differences.getChanged().size(), is(1));
-
-        assertThat(differences.getAdded().get("file3"), notNullValue());
-        assertThat(differences.getAdded().get("file4"), notNullValue());
-        assertThat(differences.getRemoved().get("file2"), notNullValue());
-        assertThat(differences.getChanged().get("file1"), notNullValue());
-
-        assertThat(differences.toString().contains("[added] file3"), is(true));
-        assertThat(differences.toString().contains("[added] file4"), is(true));
-        assertThat(differences.toString().contains("[removed] file2"), is(true));
-        assertThat(differences.toString().contains("[changed] file1"), is(true));
-    }
 
 }

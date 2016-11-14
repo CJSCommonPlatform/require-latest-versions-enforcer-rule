@@ -17,7 +17,7 @@ Add the plugin to the build plugins section of any project which is using raml-m
                     <dependency>
                         <groupId>uk.gov.justice.maven</groupId>
                         <artifactId>require-latest-versions-enforcer-rule</artifactId>
-                        <version>1.0.0-SNAPSHOT</version>
+                        <version>1.0.3-SNAPSHOT</version>
                     </dependency>
                 </dependencies>
                 <executions>

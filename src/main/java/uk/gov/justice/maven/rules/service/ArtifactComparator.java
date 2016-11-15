@@ -27,7 +27,7 @@ public class ArtifactComparator {
             differences = calc.getDifferences();
 
             if (differences.hasDifferences()) {
-                new MapFilter<>(differences.getAdded()).apply(filter);
+                differences.getAdded().clear();
                 new MapFilter<>(differences.getChanged()).apply(filter);
                 new MapFilter<>(differences.getRemoved()).apply(filter);
             }

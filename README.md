@@ -8,8 +8,8 @@ Please note you can set custom file names modifications of which you are interes
 
 Usage
 
-Add the plugin to the build plugins section of any project which is using raml-maven-plugin: 
-
+Add the plugin to the build plugins section of any project which is using raml-maven-plugin:
+```
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -37,5 +37,4 @@ Add the plugin to the build plugins section of any project which is using raml-m
                     </execution>
                 </executions>
             </plugin>
-
 ```

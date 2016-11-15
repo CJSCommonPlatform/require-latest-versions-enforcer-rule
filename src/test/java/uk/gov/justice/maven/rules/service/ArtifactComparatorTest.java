@@ -3,6 +3,7 @@ package uk.gov.justice.maven.rules.service;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
 
 import java.io.File;
 import java.util.Optional;
@@ -41,15 +42,15 @@ public class ArtifactComparatorTest {
 
         Differences differences = differencesOptional.get();
 
-        assertThat(differences.getAdded().size(), is(1));
+        assertThat(differences.getAdded().size(), is(0));
         assertThat(differences.getRemoved().size(), is(1));
         assertThat(differences.getChanged().size(), is(1));
 
-        assertThat(differences.getAdded().get("file3"), notNullValue());
+        assertThat(differences.getAdded().get("file3"), nullValue());
         assertThat(differences.getRemoved().get("file2"), notNullValue());
         assertThat(differences.getChanged().get("file1"), notNullValue());
 
-        assertThat(differences.toString().contains("[added] file3"), is(true));
+        assertThat(differences.toString().contains("[added] file3"), is(false));
         assertThat(differences.toString().contains("[removed] file2"), is(true));
         assertThat(differences.toString().contains("[changed] file1"), is(true));
     }

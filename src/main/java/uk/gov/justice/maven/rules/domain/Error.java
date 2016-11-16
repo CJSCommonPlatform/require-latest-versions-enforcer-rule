@@ -38,7 +38,7 @@ public class Error {
         if (differences.getRemoved().size() != 0) {
             sb.append(differences.getRemoved().size() + " files were");
             sb.append(" removed from " + differences.getFilename2() + "\n");
-            differences.getAdded().keySet().forEach(key -> sb.append("\t[added] " + key + "\n"));
+            differences.getRemoved().keySet().forEach(key -> sb.append("\t[removed] " + key + "\n"));
         }
 
         if (differences.getChanged().size() != 0) {

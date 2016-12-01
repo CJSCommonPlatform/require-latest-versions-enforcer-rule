@@ -23,6 +23,7 @@ public class RequireLatestVersionsService {
 
     static final String RAML_MAVEN_PLUGIN = "raml-maven-plugin";
     static final String RAML = "raml";
+    static final String SNAPSHOT = "SNAPSHOT";
 
     private ArtifactoryClient artifactoryClient;
     private ArtifactoryParser parser;
@@ -47,6 +48,8 @@ public class RequireLatestVersionsService {
                 .forEach(plugin -> plugin.getDependencies().stream()
                         .filter(dependency -> (!isEmpty(((Dependency) dependency).getClassifier())) &&
                                 ((Dependency) dependency).getClassifier().equals(RAML))
+                        .filter(dependency -> (!isEmpty(((Dependency) dependency).getVersion())) &&
+                                !((Dependency) dependency).getVersion().endsWith(SNAPSHOT))
                         .forEach(ramlDependency -> verify((Dependency) ramlDependency)
                                 .ifPresent(errors::add)));
 

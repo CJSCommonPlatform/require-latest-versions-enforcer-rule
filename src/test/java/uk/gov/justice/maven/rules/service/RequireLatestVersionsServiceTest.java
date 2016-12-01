@@ -124,6 +124,20 @@ public class RequireLatestVersionsServiceTest {
                 .withMessageContaining("Rule has failed as found higher released versions of dependencies:");
     }
 
+    @Test
+    public void executeWithRamlMavenPluginWithRamlDepsWithVersionsNotUpToDateButSnapshotsAreIgnored() throws Exception {
+        Plugin ramlPlugin = ramlPlugin();
+        when(mavenProject.getBuildPlugins()).thenReturn(asList(ramlPlugin));
+
+        Dependency dependency = dependencyWithVersion("2.0.187-SNAPSHOT");
+        dependency.setClassifier(RAML);
+        ramlPlugin.addDependency(dependency);
+
+        when(artifactoryParser.parse(anyString())).thenReturn(artifactsWithVersions("2.0.187", "2.0.188"));
+
+        apiConvergenceService.execute();
+    }
+
     private Plugin ramlPlugin() {
         Plugin plugin = new Plugin();
         plugin.setArtifactId(RequireLatestVersionsService.RAML_MAVEN_PLUGIN);

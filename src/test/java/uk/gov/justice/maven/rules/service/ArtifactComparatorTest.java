@@ -33,7 +33,7 @@ public class ArtifactComparatorTest {
         ClassLoader classLoader = getClass().getClassLoader();
         file1 = new File(classLoader.getResource("jars/version1.jar").getFile());
         file2 = new File(classLoader.getResource("jars/version2.jar").getFile());
-        artifactComparator = new ArtifactComparator(log, FILTER);
+        artifactComparator = new ArtifactComparator(FILTER, log);
     }
 
     @Test

@@ -1,4 +1,4 @@
-package uk.gov.justice.maven.rules.domain;
+package uk.gov.justice.maven.rules.service;
 
 import net.diibadaaba.zipdiff.Differences;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;

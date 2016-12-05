@@ -1,4 +1,6 @@
-package uk.gov.justice.maven.rules.domain;
+package uk.gov.justice.maven.rules.service;
+
+import uk.gov.justice.maven.rules.service.Error;
 
 import java.util.List;
 

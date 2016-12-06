@@ -1,6 +1,6 @@
 package uk.gov.justice.maven.rules.service;
 
-import static org.codehaus.groovy.runtime.InvokerHelper.asList;
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;

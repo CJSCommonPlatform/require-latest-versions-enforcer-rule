@@ -1,7 +1,5 @@
 package uk.gov.justice.maven.rules.service;
 
-
-
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +12,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Dependency;
 
 public class MavenArtifactFinder implements ArtifactFinder {
+
     private static final String LATEST_VERSION = "LATEST";
     private final ArtifactResolver artifactResolver;
     private final ArtifactRepository localRepository;

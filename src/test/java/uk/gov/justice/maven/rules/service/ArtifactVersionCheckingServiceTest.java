@@ -1,12 +1,13 @@
 package uk.gov.justice.maven.rules.service;
 
-import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import net.diibadaaba.zipdiff.Differences;
@@ -59,7 +60,7 @@ public class ArtifactVersionCheckingServiceTest {
     @Test
     public void executeWithRamlMavenPluginWithNoDepsFound() throws ExpressionEvaluationException, EnforcerRuleException {
         Plugin plugin = ramlPlugin();
-        when(mavenProject.getBuildPlugins()).thenReturn(asList(plugin));
+        when(mavenProject.getBuildPlugins()).thenReturn(singletonList(plugin));
 
         apiConvergenceService.checkVersionMismatches(mavenProject, artifactFinder, artifactComparator, log);
 
@@ -69,7 +70,7 @@ public class ArtifactVersionCheckingServiceTest {
     @Test
     public void executeWithRamlMavenPluginWithDepsWithoutClassifier() throws ExpressionEvaluationException, EnforcerRuleException {
         Plugin ramlPlugin = ramlPlugin();
-        when(mavenProject.getBuildPlugins()).thenReturn(asList(ramlPlugin));
+        when(mavenProject.getBuildPlugins()).thenReturn(singletonList(ramlPlugin));
 
         ramlPlugin.addDependency(dependencyWithVersion("1.1"));
 
@@ -81,7 +82,7 @@ public class ArtifactVersionCheckingServiceTest {
     @Test
     public void executeWithRamlMavenPluginWithRamlDepsWithVersionsUpToDate() throws ExpressionEvaluationException, EnforcerRuleException {
         Plugin ramlPlugin = ramlPlugin();
-        when(mavenProject.getBuildPlugins()).thenReturn(asList(ramlPlugin));
+        when(mavenProject.getBuildPlugins()).thenReturn(singletonList(ramlPlugin));
 
         Dependency dependency = dependencyWithVersion("3.2.1");
         dependency.setClassifier("raml");
@@ -95,7 +96,7 @@ public class ArtifactVersionCheckingServiceTest {
     @Test
     public void shouldPassWhenLastVersionNotFound() throws Exception {
         Plugin ramlPlugin = ramlPlugin();
-        when(mavenProject.getBuildPlugins()).thenReturn(asList(ramlPlugin));
+        when(mavenProject.getBuildPlugins()).thenReturn(singletonList(ramlPlugin));
 
         Dependency dependency = dependencyWithVersion("3.2.1");
         dependency.setClassifier("raml");
@@ -112,7 +113,7 @@ public class ArtifactVersionCheckingServiceTest {
     @Test
     public void executeWithRamlMavenPluginWithRamlDepsWithVersionsNotUpToDate() throws Exception {
         Plugin ramlPlugin = ramlPlugin();
-        when(mavenProject.getBuildPlugins()).thenReturn(asList(ramlPlugin));
+        when(mavenProject.getBuildPlugins()).thenReturn(singletonList(ramlPlugin));
 
         final String version = "2.0.187";
         Dependency dependency = dependencyWithVersion(version);
@@ -136,7 +137,7 @@ public class ArtifactVersionCheckingServiceTest {
     @Test
     public void executeWithRamlMavenPluginWithRamlDepsWithVersionsNotUpToDateButSnapshotsAreIgnored() throws Exception {
         Plugin ramlPlugin = ramlPlugin();
-        when(mavenProject.getBuildPlugins()).thenReturn(asList(ramlPlugin));
+        when(mavenProject.getBuildPlugins()).thenReturn(singletonList(ramlPlugin));
 
         Dependency dependency = dependencyWithVersion("2.0.187-SNAPSHOT");
         dependency.setClassifier("raml");
@@ -173,8 +174,8 @@ public class ArtifactVersionCheckingServiceTest {
     }
 
 
-    private ArrayList noPlugins() {
-        return new ArrayList();
+    private List<Plugin> noPlugins() {
+        return emptyList();
     }
 
 

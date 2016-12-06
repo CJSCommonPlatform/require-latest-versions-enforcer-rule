@@ -1,5 +1,7 @@
 # Require Latest Versions
 
+[![Build Status](https://travis-ci.org/CJSCommonPlatform/require-latest-versions-enforcer-rule.svg?branch=master)](https://travis-ci.org/CJSCommonPlatform/require-latest-versions-enforcer-rule) [![Coverage Status](https://coveralls.io/repos/github/CJSCommonPlatform/require-latest-versions-enforcer-rule/badge.svg?branch=master)](https://coveralls.io/github/CJSCommonPlatform/require-latest-versions-enforcer-rule?branch=master)
+
 A Maven Enforcer rule for ensuring that any project using the _raml-maven-plugin_ depending on the
 latest released version of any RAML dependencies. This is done by comparing version numbers and
 if the version is out of date, whether there are any modifications in the RAML or JSON schema files.

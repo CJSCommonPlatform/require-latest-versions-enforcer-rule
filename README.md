@@ -22,7 +22,7 @@ Add the plugin to the build plugins section of any project which is using _raml-
         <dependency>
             <groupId>uk.gov.justice.maven</groupId>
             <artifactId>require-latest-versions-enforcer-rule</artifactId>
-            <version>1.0.3-SNAPSHOT</version>
+            <version>1.1.0</version>
         </dependency>
     </dependencies>
     <executions>

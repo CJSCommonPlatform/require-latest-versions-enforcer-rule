@@ -5,6 +5,8 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 
 ## [Unreleased]
 
+## [1.1.0] - 2016-12-06
+
 ### Changed
 - Reimplemented artifact discovery to use standard Maven classes rather than Artifactory-specific REST calls.
 
@@ -14,5 +16,6 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 
 - Initial release
 
-[Unreleased]: https://github.com/CJSCommonPlatform/require-latest-versions-enforcer-rule/compare/release-1.0.2...HEAD
+[Unreleased]: https://github.com/CJSCommonPlatform/require-latest-versions-enforcer-rule/compare/release-1.1.0...HEAD
+[1.1.0]: https://github.com/CJSCommonPlatform/require-latest-versions-enforcer-rule/compare/release-1.0.2...release-1.1.0
 [1.0.2]: https://github.com/CJSCommonPlatform/require-latest-versions-enforcer-rule/commits/release-1.0.2

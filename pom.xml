@@ -12,7 +12,7 @@
 
     <groupId>uk.gov.justice.maven</groupId>
     <artifactId>require-latest-versions-enforcer-rule</artifactId>
-    <version>1.1.1</version>
+    <version>1.2.0-SNAPSHOT</version>
 
     <name>Require Latest Versions Enforcer Rule</name>
     <description>Maven enforcer rule for ensuring that RAML dependencies are up to date</description>

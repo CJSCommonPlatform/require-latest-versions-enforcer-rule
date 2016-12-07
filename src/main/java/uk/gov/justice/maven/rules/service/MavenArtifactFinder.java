@@ -13,7 +13,7 @@ import org.apache.maven.model.Dependency;
 
 public class MavenArtifactFinder implements ArtifactFinder {
 
-    private static final String LATEST_VERSION = "LATEST";
+    private static final String LATEST_VERSION = "RELEASE";
     private final ArtifactResolver artifactResolver;
     private final ArtifactRepository localRepository;
     private final List<ArtifactRepository> remoteRepositories;

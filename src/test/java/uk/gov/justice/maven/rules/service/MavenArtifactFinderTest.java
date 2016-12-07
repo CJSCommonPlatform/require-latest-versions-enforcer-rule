@@ -80,7 +80,7 @@ public class MavenArtifactFinderTest {
 
         assertThat(artifactToResolve.getGroupId(), is(groupId));
         assertThat(artifactToResolve.getArtifactId(), is(artifactId));
-        assertThat(artifactToResolve.getVersion(), is("LATEST"));
+        assertThat(artifactToResolve.getVersion(), is("RELEASE"));
         assertThat(artifactToResolve.getClassifier(), is(classifier));
         assertThat(artifactToResolve.getType(), is(type));
         assertThat(artifactToResolve.getScope(), is(scope));

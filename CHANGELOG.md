@@ -5,6 +5,11 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 
 ## [Unreleased]
 
+## [1.1.1] - 2016-12-07
+
+### Fixed
+- Only consider release versions not snapshots
+
 ## [1.1.0] - 2016-12-06
 
 ### Changed
@@ -16,6 +21,7 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 
 - Initial release
 
-[Unreleased]: https://github.com/CJSCommonPlatform/require-latest-versions-enforcer-rule/compare/release-1.1.0...HEAD
+[Unreleased]: https://github.com/CJSCommonPlatform/require-latest-versions-enforcer-rule/compare/release-1.1.1...HEAD
+[1.1.1]: https://github.com/CJSCommonPlatform/require-latest-versions-enforcer-rule/compare/release-1.1.0...release-1.1.1
 [1.1.0]: https://github.com/CJSCommonPlatform/require-latest-versions-enforcer-rule/compare/release-1.0.2...release-1.1.0
 [1.0.2]: https://github.com/CJSCommonPlatform/require-latest-versions-enforcer-rule/commits/release-1.0.2

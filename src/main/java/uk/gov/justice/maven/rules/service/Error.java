@@ -11,7 +11,9 @@ public class Error {
     private String releasedVersion;
     private Differences differences;
 
-    public Error(Dependency ramlDependency, String artifactVersion, Differences differences) {
+    public Error(final Dependency ramlDependency,
+                 final String artifactVersion,
+                 final Differences differences) {
         this.ramlDependency = ramlDependency;
         this.releasedVersion = artifactVersion;
         this.differences = differences;
@@ -26,8 +28,8 @@ public class Error {
                 '}';
     }
 
-    public String toString(Differences differences) {
-        StringBuffer sb = new StringBuffer();
+    public String toString(final Differences differences) {
+        final StringBuffer sb = new StringBuffer();
 
         if (differences.getAdded().size() != 0) {
             sb.append(differences.getAdded().size() + " files were");
@@ -52,7 +54,7 @@ public class Error {
             });
         }
 
-        int differenceCount = differences.getAdded().size() + differences.getChanged().size() + differences.getRemoved().size();
+        final int differenceCount = differences.getAdded().size() + differences.getChanged().size() + differences.getRemoved().size();
 
         sb.append("Total differences: " + differenceCount);
 

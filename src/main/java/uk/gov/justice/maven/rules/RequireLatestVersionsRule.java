@@ -3,9 +3,12 @@ package uk.gov.justice.maven.rules;
 
 import static java.lang.String.format;
 
+import uk.gov.justice.maven.rules.service.ArtifactComparator;
 import uk.gov.justice.maven.rules.service.ArtifactComparatorFactory;
+import uk.gov.justice.maven.rules.service.ArtifactFinder;
 import uk.gov.justice.maven.rules.service.ArtifactFinderFactory;
 import uk.gov.justice.maven.rules.service.ArtifactVersionCheckingService;
+import uk.gov.justice.maven.rules.service.CheckablePlugins;
 import uk.gov.justice.maven.rules.service.RuleException;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
@@ -17,22 +20,28 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 public class RequireLatestVersionsRule implements EnforcerRule {
-    private ArtifactVersionCheckingService artifactVersionCheckingService = new ArtifactVersionCheckingService();
+
+    private ArtifactVersionCheckingService artifactVersionCheckingService = new ArtifactVersionCheckingService(new CheckablePlugins());
     private ArtifactFinderFactory artifactFinderFactory = new ArtifactFinderFactory();
     private ArtifactComparatorFactory artifactComparatorFactory = new ArtifactComparatorFactory();
     private String filter;
 
+    @Override
     public void execute(final EnforcerRuleHelper helper) throws EnforcerRuleException {
+
         try {
+
             final MavenProject mavenProject = (MavenProject) helper.evaluate("${project}");
             final Log log = helper.getLog();
-            final String filter = this.filter;
+            final ArtifactFinder artifactFinder = artifactFinderFactory.artifactFinderFrom(helper);
+            final ArtifactComparator artifactComparator = artifactComparatorFactory.artifactComparatorOf(filter, log);
+
             artifactVersionCheckingService.checkVersionMismatches(
                     mavenProject,
-                    artifactFinderFactory.artifactFinderFrom(helper),
-                    artifactComparatorFactory.artifactComparatorOf(filter, log),
-                    log
-            );
+                    artifactFinder,
+                    artifactComparator,
+                    log);
+
         } catch (final RuleException e) {
             throw new EnforcerRuleException(format("%s%s", e.getMessage(), e.getError()));
         } catch (final ExpressionEvaluationException | ComponentLookupException e) {
@@ -40,22 +49,22 @@ public class RequireLatestVersionsRule implements EnforcerRule {
         }
     }
 
-
-
     public void setFilter(final String filter) {
         this.filter = filter;
     }
 
-    public String getCacheId() {
-        return "";
-    }
-
+    @Override
     public boolean isCacheable() {
         return false;
     }
 
+    @Override
     public boolean isResultValid(EnforcerRule arg0) {
         return false;
     }
 
+    @Override
+    public String getCacheId() {
+        return "";
+    }
 }

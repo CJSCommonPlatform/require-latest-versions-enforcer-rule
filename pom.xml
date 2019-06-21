@@ -7,7 +7,7 @@
     <parent>
         <groupId>uk.gov.justice</groupId>
         <artifactId>maven-parent-pom</artifactId>
-        <version>1.2.0</version>
+        <version>1.7.1</version>
     </parent>
 
     <groupId>uk.gov.justice.maven</groupId>
@@ -18,7 +18,9 @@
     <description>Maven enforcer rule for ensuring that RAML dependencies are up to date</description>
 
     <properties>
-        <common-bom.version>1.4.0</common-bom.version>
+        <cpp.repo.name>require-latest-versions-enforcer-rule</cpp.repo.name>
+
+        <common-bom.version>2.2.0</common-bom.version>
         <enforcer-api.version>1.4.1</enforcer-api.version>
         <maven.version>3.3.9</maven.version>
         <zipdiff.version>1.0</zipdiff.version>

@@ -7,29 +7,25 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.util.List;
 import java.util.Optional;
 
 import net.diibadaaba.zipdiff.Differences;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ArtifactVersionCheckingServiceTest {
-
-    private ArtifactVersionCheckingService apiConvergenceService = new ArtifactVersionCheckingService();
 
     @Mock
     private ArtifactFinder artifactFinder;
@@ -42,15 +38,26 @@ public class ArtifactVersionCheckingServiceTest {
 
     @Mock
     private File file;
+
     @Mock
     private File file2;
 
     @Mock
     private MavenProject mavenProject;
 
+    @Mock
+    private CheckablePlugins checkablePlugins;
+
+    @InjectMocks
+    private ArtifactVersionCheckingService apiConvergenceService;
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Test
-    public void executeWithNoPluginsFound() throws ExpressionEvaluationException, EnforcerRuleException {
-        when(mavenProject.getBuildPlugins()).thenReturn(noPlugins());
+    public void shouldPassWhenNoPluginsFound() throws Exception {
+
+        when(mavenProject.getBuildPlugins()).thenReturn(emptyList());
 
         apiConvergenceService.checkVersionMismatches(mavenProject, artifactFinder, artifactComparator, log);
 
@@ -58,9 +65,9 @@ public class ArtifactVersionCheckingServiceTest {
     }
 
     @Test
-    public void executeWithRamlMavenPluginWithNoDepsFound() throws ExpressionEvaluationException, EnforcerRuleException {
-        Plugin plugin = ramlPlugin();
-        when(mavenProject.getBuildPlugins()).thenReturn(singletonList(plugin));
+    public void shouldDoNothingWhenRamlMavenPluginHasNoDependencies() throws Exception {
+
+        when(mavenProject.getBuildPlugins()).thenReturn(singletonList(ramlPlugin()));
 
         apiConvergenceService.checkVersionMismatches(mavenProject, artifactFinder, artifactComparator, log);
 
@@ -68,11 +75,11 @@ public class ArtifactVersionCheckingServiceTest {
     }
 
     @Test
-    public void executeWithRamlMavenPluginWithDepsWithoutClassifier() throws ExpressionEvaluationException, EnforcerRuleException {
-        Plugin ramlPlugin = ramlPlugin();
-        when(mavenProject.getBuildPlugins()).thenReturn(singletonList(ramlPlugin));
+    public void shouldPassWhenRamlMavenPluginHasDependenciesWithoutClassifier() throws Exception {
 
-        ramlPlugin.addDependency(dependencyWithVersion("1.1"));
+        ramlPlugin().addDependency(dependencyWithVersion("1.1"));
+
+        when(mavenProject.getBuildPlugins()).thenReturn(singletonList(ramlPlugin()));
 
         apiConvergenceService.checkVersionMismatches(mavenProject, artifactFinder, artifactComparator, log);
 
@@ -80,14 +87,13 @@ public class ArtifactVersionCheckingServiceTest {
     }
 
     @Test
-    public void executeWithRamlMavenPluginWithRamlDepsWithVersionsUpToDate() throws ExpressionEvaluationException, EnforcerRuleException {
-        Plugin ramlPlugin = ramlPlugin();
-        when(mavenProject.getBuildPlugins()).thenReturn(singletonList(ramlPlugin));
+    public void shouldPassWhenRamlMavenPluginHasRamlDependenciesWithVersionsUpToDate() throws Exception {
 
-        Dependency dependency = dependencyWithVersion("3.2.1");
+        final Dependency dependency = dependencyWithVersion("3.2.1");
         dependency.setClassifier("raml");
-        ramlPlugin.addDependency(dependency);
+        ramlPlugin().addDependency(dependency);
 
+        when(mavenProject.getBuildPlugins()).thenReturn(singletonList(ramlPlugin()));
         when(artifactFinder.latestArtifactOf(dependency)).thenReturn(artifactOf("2.0.188"));
 
         apiConvergenceService.checkVersionMismatches(mavenProject, artifactFinder, artifactComparator, log);
@@ -95,54 +101,48 @@ public class ArtifactVersionCheckingServiceTest {
 
     @Test
     public void shouldPassWhenLastVersionNotFound() throws Exception {
-        Plugin ramlPlugin = ramlPlugin();
-        when(mavenProject.getBuildPlugins()).thenReturn(singletonList(ramlPlugin));
 
-        Dependency dependency = dependencyWithVersion("3.2.1");
+        final Dependency dependency = dependencyWithVersion("3.2.1");
         dependency.setClassifier("raml");
-        ramlPlugin.addDependency(dependency);
+        ramlPlugin().addDependency(dependency);
 
+        when(mavenProject.getBuildPlugins()).thenReturn(singletonList(ramlPlugin()));
         when(artifactFinder.latestArtifactOf(dependency)).thenReturn(empty());
 
         apiConvergenceService.checkVersionMismatches(mavenProject, artifactFinder, artifactComparator, log);
     }
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
-    public void executeWithRamlMavenPluginWithRamlDepsWithVersionsNotUpToDate() throws Exception {
-        Plugin ramlPlugin = ramlPlugin();
-        when(mavenProject.getBuildPlugins()).thenReturn(singletonList(ramlPlugin));
+    public void shouldThrowRuleExceptionWhenRamlMavenPluginHasRamlDependenciesWithVersionsNotUpToDate() throws Exception {
 
+        final Plugin ramlPlugin = ramlPlugin();
         final String version = "2.0.187";
-        Dependency dependency = dependencyWithVersion(version);
+        final String latestVersion = "2.0.188";
+
+        final Dependency dependency = dependencyWithVersion(version);
         dependency.setClassifier("raml");
         ramlPlugin.addDependency(dependency);
 
         thrown.expect(RuleException.class);
         thrown.expectMessage("Rule has failed as found higher released versions of dependencies:");
 
-
-        final String latestVersion = "2.0.188";
+        when(mavenProject.getBuildPlugins()).thenReturn(singletonList(ramlPlugin));
+        when(checkablePlugins.isCheckablePlugin(ramlPlugin)).thenReturn(true);
         when(artifactFinder.latestArtifactOf(dependency)).thenReturn(artifactOf(latestVersion, file2));
-
         when(artifactFinder.artifactOf(dependency)).thenReturn(artifactOf(version, file));
-
         when(artifactComparator.findDifferences(file, file2)).thenReturn(Optional.of(new Differences()));
 
         apiConvergenceService.checkVersionMismatches(mavenProject, artifactFinder, artifactComparator, log);
     }
 
     @Test
-    public void executeWithRamlMavenPluginWithRamlDepsWithVersionsNotUpToDateButSnapshotsAreIgnored() throws Exception {
-        Plugin ramlPlugin = ramlPlugin();
-        when(mavenProject.getBuildPlugins()).thenReturn(singletonList(ramlPlugin));
+    public void shouldPassWhenRamlMavenPluginHasRamlDependenciesWithVersionsNotUpToDateButButAreSnapshots() throws Exception {
 
-        Dependency dependency = dependencyWithVersion("2.0.187-SNAPSHOT");
+        final Dependency dependency = dependencyWithVersion("2.0.187-SNAPSHOT");
         dependency.setClassifier("raml");
-        ramlPlugin.addDependency(dependency);
+        ramlPlugin().addDependency(dependency);
 
+        when(mavenProject.getBuildPlugins()).thenReturn(singletonList(ramlPlugin()));
         when(artifactFinder.latestArtifactOf(dependency)).thenReturn(artifactOf("2.0.188"));
 
         apiConvergenceService.checkVersionMismatches(mavenProject, artifactFinder, artifactComparator, log);
@@ -158,25 +158,17 @@ public class ArtifactVersionCheckingServiceTest {
         return Optional.of(artifact);
     }
 
-
     private Plugin ramlPlugin() {
-        Plugin plugin = new Plugin();
+        final Plugin plugin = new Plugin();
         plugin.setArtifactId("raml-maven-plugin");
         return plugin;
     }
 
     private Dependency dependencyWithVersion(String version) {
-        Dependency ramlDep = new Dependency();
+        final Dependency ramlDep = new Dependency();
         ramlDep.setArtifactId("a");
         ramlDep.setVersion(version);
         ramlDep.setGroupId("xyz");
         return ramlDep;
     }
-
-
-    private List<Plugin> noPlugins() {
-        return emptyList();
-    }
-
-
 }

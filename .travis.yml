@@ -1,23 +1,19 @@
+dist: trusty
+sudo: false
 language: java
 jdk:
   - oraclejdk8
+git:
+  cache: 3
 cache:
   directories:
     - "$HOME/.m2"
+addons:
+  sonarcloud:
+    organization: cjscommonplatform
 before_install:
   - git clone https://github.com/CJSCommonPlatform/travis-settings.git target/travis-settings
-install:
-  - cp -f $JAVA_HOME/jre/lib/security/cacerts target/travis-settings/cacerts
-  - chmod u+w target/travis-settings/cacerts
-  - $JAVA_HOME/jre/bin/keytool -import -v -noprompt -storepass changeit -storetype jks -trustcacerts -alias IndigoBlueRoot -file target/travis-settings/ROOT-CA.crt -keystore target/travis-settings/cacerts
-script: mvn -Djavax.net.ssl.trustStore=$PWD/target/travis-settings/cacerts -B -C -V -U --settings target/travis-settings/settings.xml verify coveralls:report
-after_success:
-  - '[[ $TRAVIS_BRANCH == "master" && $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_TAG != release-* ]] && mvn -Djavax.net.ssl.trustStore=$PWD/target/travis-settings/cacerts -DskipTests=true -B -C -V --errors deploy --settings target/travis-settings/settings.xml'
-  - '[[ $TRAVIS_TAG == release-* ]] && mvn -Prelease -Djavax.net.ssl.trustStore=$PWD/target/travis-settings/cacerts -DskipTests=true -B -C -V --errors deploy --settings target/travis-settings/settings.xml'
-notifications:
-  slack:
-    secure: "mqkkdEiuEGDzSw1JC59Ebu5kl+G3lFy9Bp7DYfmFy2DFFVKCCYo0rGvCQcZVZSOQbqRzqQSOsR9hJ0UXf0Ue43f4kh/o2RCI7SXIMGukk4sRvfOInVHUaLVsfoeodC0P18452Uin/TFIaQZa7Mt6Ntz93V7GyqZydCImTzYuNLA2ZH2Id0NVwmwD+0ZRrX1hYm9fuj/akbO8XRZu/ZfKYK5AOVp+9PNUkcI7vifVF5Sehg7jB69UuwWlq9sgkIB5VCft5oQqHcbqSv4FI4LcARHHCKlgLUJyq+Ui9V7sQ4qzBOVfdLqyGWmoj/62sNmXeBCrQD+J3RSbZNk4W95Y3XVW49p8G4B1D7Kbpo//M6v1NWLgEewr1rCDZsWhSGjfAcYjJdydfbWo8GA0/di6JjrbYvCvpprBTypL+tq5aZlmmWN6xqJnB0jxXFze/yPTa4lRk+5MNjTuo7qV/QGWPmlur4zrELlJNZtGIMU8QtKU+JfS3nbk/pfV5smf2Ep7MV43hQ2sAwrFFGZjWvh3qVSEhba4bHdwHoPnjxQbgd2pLMsXnnoSuiaVQHaSfU6hd3Js2Io8mhtAZFUgXyAaxKZr0nBaDrb00PNV/TFor5yXyaa1UCwqlZyQJGUyYEcyOMUP7mFiqLq+TMYeldWQNu8N5P1bGRORTFz4uuQnVLc="
-env:
-  global:
-    - secure: "erqw9AsqHsxVZheSeNdJayLQRGQ1qwXGD0zKoA2lVGIrxvNx2nOrsNoqNFbFqU9Wr/SHsp25KGyV08Pf7DfwvzSMWkLQ9GliEMwJJOFau+QdFIleOtr907jzBj4UhvaggHDqnipUgHkjOnLXd0RZy9cV1Z3q3ciWG6k9vPFLlCCG7Em5DF3Dx9yPBAtBEOfcnEJNzzZEBANUEJ7Thjj1wXA6m7158PJQ8VOzUBxgQPc6KaM80p1kQcRwARlR/VbpqDg8VvR6Z7polaGx3gR5kyHMuL3TwWskUoOLjVMpC6zbZcm/qCpuqcyrbgrWrhVSTLhL+ajVUwgcGxDD+DiIcZPFssnQzDo/aBr2Q1R94CaYdoTKkNzE8hWGza0DdaEr1HGr1xqpEDfYS5bxyN50lcHDC3ahVjhMGyTrZ/sfdGJKOtg0wKmqLWqe3lGI+u7Paoe1ph4ZMN7sgyTrqoTU6W5kkSyH+a5EnLmpagFLdRb6BdgX9jUoqZHmHiT5OqZsMNsmFZCZiyw9fsarp7BJIDx/dC0HkLjUo3cxH7Y1fSxgYkJDS2dTnb0ZLFcUO5TJp6q/pBjtGHfAyEA84cZoS7ax5mVuWM7lvfqOwgz2wo8BzxmVDIX34oPO1v3YE8AlS+Hzm3LuEKMo83yntoEOA69hv+hEFma20K7AStS/Lm8="
-    - secure: "Ry7wHGG2uTqEaCLMQP0KmiXtPV4U1Kor9PjMWqjoFRmB0wMVR16kaa5q6vZIFSO3payyqYsLeB80GWSUCxtH56fnrvaKHBEMWd29Zffo1oiRzgPWPs5zoD5dm68h/CQ0lfwKzsw2d38UCR49Cl3pBFuZ2+U7xJH8hZ6Q1husCpiXL7rUym/4wODM6YcQqQnNI/PCkRk+ldVkLjCyKyTbxLhu/IfZha0weqRNsXd4pwe+BofozcNScKMTdfgHh3H4kW2wwVFHMrOVmU0bEeN/PfZ260b29Tgqtsgumrbi4XGahxpK0ZtdICU1cjoYBuKEaJXM0nQSCka/qbPKX8zBvnNNoRVxgrg19b/erslaSW7aFWRjw/1amm6LIW5ZxuwMHuwkxhIhz38kumcDPKGy1HlJweIwWcc3kAVSF5ImpsYmqjbG/1I0932L0YrTIGy5jPwAIUj1mhsqszkxQCqQ2eFKe/Kcop4DZAlRn4ma9rcYcDeNh7S70hqVnadd56vTscQULu5ecaZOm8LwwrhnnqLrFdO4cF7xHJrfAwwQwQQqRf1uMITvg7ZQVgpZFXAkegx8n27fOx70MihA/BaFt0TNRzba2XA50gMnfyU4sMNQtl/FHC9INc4K92e7zIJYXGRjvyxw/tsslCD13Y9xytAw6ngkb5195leLSvzFsUU="
+  - ln -sfT ${PWD}/target/travis-settings/settings.xml ${HOME}/.m2/settings.xml
+install: "${PWD}/target/travis-settings/java/install.sh -e -q -DexcludeGroupIds=uk.gov.justice.service,uk.gov.justice.services"
+script: "${PWD}/target/travis-settings/java/script-install.sh coveralls:report sonar:sonar"
+after_success: "${PWD}/target/travis-settings/java/after_success.sh"

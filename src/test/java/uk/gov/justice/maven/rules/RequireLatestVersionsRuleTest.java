@@ -32,6 +32,7 @@ public class RequireLatestVersionsRuleTest {
     private static final List<ArtifactRepository> NOT_USED_REMOTE_REPOSITORIES = null;
     private static final String NOT_USED_FILTER = null;
     private static final Log NOT_USED_LOG = null;
+
     @Mock
     private ArtifactVersionCheckingService artifactVersionCheckingService;
 
@@ -40,28 +41,32 @@ public class RequireLatestVersionsRuleTest {
 
     @Mock
     private ArtifactFinderFactory artifactFinderFactory;
+
     @Mock
     private ArtifactComparatorFactory artifactComparatorFactory;
 
     @InjectMocks
-    private RequireLatestVersionsRule rule = new RequireLatestVersionsRule();
+    private RequireLatestVersionsRule requireLatestVersionsRule;
 
     @Test
     public void shouldExecuteServiceCheckingVersionMismatches() throws Exception {
+
         final MavenProject mavenProject = new MavenProject();
         final String filter = "someFilter";
         final DefaultLog log = new DefaultLog(null);
 
-        when(helper.evaluate("${project}")).thenReturn(mavenProject);
-        when(helper.getLog()).thenReturn(log);
         final ArtifactFinder artifactFinder = new MavenArtifactFinder(NOT_USED_ARTIFACT_RESOLVER, NOT_USED_LOCAL_REPOSITORY, NOT_USED_REMOTE_REPOSITORIES);
         final ArtifactComparator artifactComparator = new ArtifactComparator(NOT_USED_FILTER, NOT_USED_LOG);
+
+        when(helper.evaluate("${project}")).thenReturn(mavenProject);
+        when(helper.getLog()).thenReturn(log);
         when(artifactFinderFactory.artifactFinderFrom(helper)).thenReturn(artifactFinder);
         when(artifactComparatorFactory.artifactComparatorOf(filter, log)).thenReturn(artifactComparator);
 
-        rule.setFilter(filter);
+        requireLatestVersionsRule.setFilter(filter);
 
-        rule.execute(helper);
+        requireLatestVersionsRule.execute(helper);
+
         verify(artifactVersionCheckingService).checkVersionMismatches(mavenProject, artifactFinder, artifactComparator, log);
     }
 }

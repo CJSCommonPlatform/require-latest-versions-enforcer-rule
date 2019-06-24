@@ -11,6 +11,7 @@ import net.diibadaaba.zipdiff.Differences;
 import org.apache.maven.plugin.logging.Log;
 
 public class ArtifactComparator {
+
     private final Log log;
     private final String filter;
 
@@ -31,7 +32,9 @@ public class ArtifactComparator {
                 new MapFilter<>(differences.getChanged()).apply(filter);
                 new MapFilter<>(differences.getRemoved()).apply(filter);
             }
+
             return differences.hasDifferences() ? Optional.of(differences) : empty();
+
         } catch (final IOException e) {
             log.error("Couldn't read files: " + ramlDependencyFile + "," + releasedDependencyFile, e);
         }

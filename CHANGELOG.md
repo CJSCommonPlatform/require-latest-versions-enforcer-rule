@@ -5,6 +5,7 @@ on [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to
 
 ## [Unreleased]
 
+## [1.2.0] - 2019-06-24
 ### Added
 - Check all framework plugin types
 

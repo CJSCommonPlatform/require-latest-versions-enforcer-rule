@@ -3,8 +3,6 @@ package uk.gov.justice.maven.rules.service;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-import uk.gov.justice.maven.rules.service.Error;
-
 import net.diibadaaba.zipdiff.Differences;
 import org.apache.maven.model.Dependency;
 import org.junit.Test;

@@ -1,0 +1,1 @@
+/Users/dev/workspace/require-latest-versions-enforcer-rule/target/travis-settings/mvnw

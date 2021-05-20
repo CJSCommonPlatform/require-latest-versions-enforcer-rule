@@ -2,8 +2,8 @@ package uk.gov.justice.maven.rules.service;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
